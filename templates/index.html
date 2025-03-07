@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition</title>
+
+    <style>
+        .face-conteiner{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .face-labels {
+            margin-left: 22px;
+        }
+        .face-labels input {
+            display: flex;
+            margin-bottom: 12px;
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <h1 style="text-align: center;">Upload Image</h1>
+    <form action="{{url_for('index')}}" method="post" enctype="multipart/form-data">
+        <label for="files"> Upload Multiple Images:</label>
+        <input type="file" name="files" accept="image/*" multiple required>
+        <br>
+        <label for="accuracy">Face Detection</label>
+        <select name="accuracy" id="accuracy">
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">LOW</option>
+        </select>
+        <br>
+        <label for="reference_image">Refrence Image:</label>
+        <input type="file" name="reference_image" accept="image/*">
+
+        <button type="submit">Detect Face and Compare</button>
+    </form>
+
+
+
+    {% if original_image %}
+        {%for i in range(original_image|length)%}
+
+        <h2>Original Image{{i + 1}}</h2>
+        <img src="{{ url_for('static', filename='uploads/' + original_image) }}" alt="Original Image" width="300">
+        {%endfor%}
+    {% endif %}
+
+    {% if detected_image %}
+        {%for i in range(original_image|length)%}
+        <h2>Detected Faces {{i + 1}}</h2>
+        <div class="face-container">
+            <img src="{{ url_for('static', filename='uploads/' + detected_image) }}" alt="Detected Faces" width="300">
+            <div class="face-labels">
+                {%for label in face_labels[i]%}
+                    <input type="text" name="face {{loop.index}}_label" placeholder="Face {{loop.index}} Label" value="{{label}}">
+                {%endfor%}
+            </div>
+        </div>
+        {%endfor%}    
+    {%endif%}
+    {%if comparison_results is not none%}
+    <h2>Face Comparison</h2>
+    {%if comparison_results%}
+        <p>The faces match!</p>
+        {%else%}
+        <p>The face don't match.</p>
+
+    {% endif %}
+    {% endif %}    
+</body>
+</html>
