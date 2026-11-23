@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard · FaceRec</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<nav class="navbar">
+  <div class="brand">🧠 FaceRec</div>
+  <div class="links">
+    <a href="{{ url_for('index') }}">Home</a>
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('history') }}">History</a>
+    <a href="{{ url_for('logout') }}">Logout ({{ session['username'] }})</a>
+  </div>
+</nav>
+
+<main class="container">
+  <h1>Dashboard</h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flashes">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <section class="stats">
+    <div class="stat-card">
+      <span class="num">{{ stats.total_operations }}</span>
+      <span class="label">Total Operations</span>
+    </div>
+    <div class="stat-card">
+      <span class="num">{{ stats.detections }}</span>
+      <span class="label">Detections</span>
+    </div>
+    <div class="stat-card">
+      <span class="num">{{ stats.comparisons }}</span>
+      <span class="label">Comparisons</span>
+    </div>
+    <div class="stat-card">
+      <span class="num">{{ stats.recognitions }}</span>
+      <span class="label">Recognitions</span>
+    </div>
+    <div class="stat-card">
+      <span class="num">{{ stats.total_faces }}</span>
+      <span class="label">Total Faces</span>
+    </div>
+  </section>
+
+  <h2>Recent Activity</h2>
+  {% if history %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th><th>Kind</th><th>Faces</th><th>Detail</th><th>When</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in history %}
+          <tr>
+            <td>{{ r.id }}</td>
+            <td><span class="badge">{{ r.kind }}</span></td>
+            <td>{{ r.face_count }}</td>
+            <td>{{ r.detail }}</td>
+            <td>{{ r.created_at[:19].replace('T', ' ') }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No activity yet. <a href="{{ url_for('index') }}">Try it out!</a></p>
+  {% endif %}
+</main>
+
+<footer class="footer">© FaceRec · Powered by OpenCV</footer>
+</body>
+</html>

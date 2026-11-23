@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>History · FaceRec</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<nav class="navbar">
+  <div class="brand">🧠 FaceRec</div>
+  <div class="links">
+    <a href="{{ url_for('index') }}">Home</a>
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('history') }}">History</a>
+    <a href="{{ url_for('logout') }}">Logout ({{ session['username'] }})</a>
+  </div>
+</nav>
+
+<main class="container">
+  <h1>Operation History</h1>
+
+  {% if results %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th><th>Kind</th><th>Faces</th><th>Detail</th>
+          <th>Image</th><th>Result</th><th>When</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in results %}
+          <tr>
+            <td>{{ r.id }}</td>
+            <td><span class="badge">{{ r.kind }}</span></td>
+            <td>{{ r.face_count }}</td>
+            <td>{{ r.detail }}</td>
+            <td>
+              {% if r.image_path and '|' not in r.image_path and r.image_path.startswith('/static') %}
+                <a href="{{ r.image_path }}" target="_blank">view</a>
+              {% else %}—{% endif %}
+            </td>
+            <td>
+              {% if r.result_path and r.result_path.startswith('/static') %}
+                <a href="{{ r.result_path }}" target="_blank">view</a>
+              {% else %}—{% endif %}
+            </td>
+            <td>{{ r.created_at[:19].replace('T', ' ') }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No history yet.</p>
+  {% endif %}
+</main>
+
+<footer class="footer">© FaceRec · Powered by OpenCV</footer>
+</body>
+</html>
