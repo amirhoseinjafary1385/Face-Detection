@@ -1,81 +1,451 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Face Recognition</title>
+\<html lang="en"> \<head>     \<meta charset="UTF-8">     \<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        .face-conteiner{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+```
+<title>Face Recognition AI Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    dark: '#080d1a',
+                    panel: '#111a2e',
+                    accent: '#6366f1'
+                }
+            }
         }
-        .face-labels {
-            margin-left: 22px;
-        }
-        .face-labels input {
-            display: flex;
-            margin-bottom: 12px;
-        }
+    }
+</script>
 
-    </style>
-</head>
+<style>
+    body {
+        background:
+            radial-gradient(circle at top left, #312e8140, transparent 35%),
+            radial-gradient(circle at bottom right, #1d4ed840, transparent 35%),
+            #080d1a;
+    }
+
+    .glass {
+        background: rgba(17, 26, 46, 0.85);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .upload-box {
+        transition: 0.3s ease;
+    }
+
+    .upload-box:hover {
+        border-color: #818cf8;
+        background: rgba(99,102,241,0.08);
+    }
+</style>
+```
+
+\</head>
+
+\<body class="text-white min-h-screen">
+
+```
+<!-- Navbar -->
+
+<nav class="border-b border-white/10 px-6 py-5">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+
+        <h1 class="text-2xl font-bold tracking-tight">
+            <span class="text-indigo-400">Face</span>Recognition AI
+        </h1>
+
+        <span class="text-sm text-green-400 bg-green-400/10 px-4 py-2 rounded-full">
+            ● System Online
+        </span>
+
+    </div>
+</nav>
 
 
-<body>
+<!-- Main Container -->
 
-    <h1 style="text-align: center;">Upload Image</h1>
-    <form action="{{url_for('index')}}" method="post" enctype="multipart/form-data">
-        <label for="files"> Upload Multiple Images:</label>
-        <input type="file" name="files" accept="image/*" multiple required>
-        <br>
-        <label for="accuracy">Face Detection</label>
-        <select name="accuracy" id="accuracy">
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">LOW</option>
-        </select>
-        <br>
-        <label for="reference_image">Refrence Image:</label>
-        <input type="file" name="reference_image" accept="image/*">
+<main class="max-w-7xl mx-auto px-6 py-12">
 
-        <button type="submit">Detect Face and Compare</button>
-    </form>
+    <!-- Header -->
+
+    <section class="text-center mb-12">
+
+        <h2 class="text-4xl md:text-5xl font-extrabold mb-4">
+            Intelligent Face Detection
+        </h2>
+
+        <p class="text-gray-400 max-w-xl mx-auto">
+            Upload images, detect human faces, identify facial features
+            and compare faces using computer vision.
+        </p>
+
+    </section>
 
 
+    <!-- Upload Form -->
+
+    <section class="glass rounded-3xl p-8 shadow-2xl mb-12">
+
+        <h3 class="text-xl font-bold mb-6">
+            Image Processing Configuration
+        </h3>
+
+        <form action="{{ url_for('index') }}"
+              method="POST"
+              enctype="multipart/form-data"
+              id="uploadForm">
+
+            <div class="grid md:grid-cols-2 gap-8">
+
+                <!-- Multiple Images -->
+
+                <div>
+
+                    <label class="block text-sm font-semibold mb-3">
+                        Upload Images
+                    </label>
+
+                    <label for="files"
+                           class="upload-box flex flex-col items-center justify-center
+                           border-2 border-dashed border-gray-600 rounded-2xl
+                           p-10 cursor-pointer">
+
+                        <span class="text-5xl mb-4">📸</span>
+
+                        <span class="font-semibold">
+                            Choose Multiple Images
+                        </span>
+
+                        <span class="text-gray-400 text-sm mt-2">
+                            PNG, JPG, JPEG
+                        </span>
+
+                        <input
+                            type="file"
+                            name="files"
+                            id="files"
+                            accept="image/*"
+                            multiple
+                            required
+                            class="hidden">
+
+                    </label>
+
+                    <p id="fileCount" class="text-sm text-indigo-300 mt-3">
+                        No images selected
+                    </p>
+
+                </div>
+
+
+                <!-- Reference Image -->
+
+                <div>
+
+                    <label class="block text-sm font-semibold mb-3">
+                        Reference Image
+                    </label>
+
+                    <label for="reference_image"
+                           class="upload-box flex flex-col items-center justify-center
+                           border-2 border-dashed border-gray-600 rounded-2xl
+                           p-10 cursor-pointer">
+
+                        <span class="text-5xl mb-4">🧑</span>
+
+                        <span class="font-semibold">
+                            Upload Reference Face
+                        </span>
+
+                        <span class="text-gray-400 text-sm mt-2">
+                            Select an image for comparison
+                        </span>
+
+                        <input
+                            type="file"
+                            name="reference_image"
+                            id="reference_image"
+                            accept="image/*"
+                            class="hidden">
+
+                    </label>
+
+                    <p id="referenceName" class="text-sm text-indigo-300 mt-3">
+                        No reference image selected
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Settings -->
+
+            <div class="grid md:grid-cols-2 gap-6 mt-8">
+
+                <div>
+
+                    <label for="accuracy"
+                           class="block text-sm font-semibold mb-3">
+                        Detection Accuracy
+                    </label>
+
+                    <select name="accuracy"
+                            id="accuracy"
+                            class="w-full bg-dark border border-gray-700
+                            rounded-xl p-4 focus:outline-none
+                            focus:border-indigo-500">
+
+                        <option value="high">High Accuracy</option>
+                        <option value="medium" selected>Medium Accuracy</option>
+                        <option value="low">Low Accuracy / Faster</option>
+
+                    </select>
+
+                </div>
+
+                <div class="flex items-end">
+
+                    <button type="submit"
+                            id="submitButton"
+                            class="w-full bg-indigo-600 hover:bg-indigo-500
+                            transition-all duration-300 rounded-xl
+                            p-4 font-bold shadow-lg shadow-indigo-600/20">
+
+                        Detect & Compare Faces →
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- Processing Results -->
 
     {% if original_image %}
-        {%for i in range(original_image|length)%}
 
-        <h2>Original Image{{i + 1}}</h2>
-        <img src="{{ url_for('static', filename='uploads/' + original_image) }}" alt="Original Image" width="300">
-        {%endfor%}
+    <section class="mb-12">
+
+        <div class="flex items-center justify-between mb-8">
+
+            <h2 class="text-2xl font-bold">
+                Processing Results
+            </h2>
+
+            <span class="text-green-400 text-sm">
+                ● Processing Complete
+            </span>
+
+        </div>
+
+
+        <div class="grid md:grid-cols-2 gap-8">
+
+            {% for image in original_image %}
+
+            <div class="glass rounded-2xl p-5">
+
+                <h3 class="font-bold text-lg mb-4">
+                    Original Image {{ loop.index }}
+                </h3>
+
+                <img
+                    src="{{ url_for('static', filename='uploads/' + image) }}"
+                    alt="Original Image {{ loop.index }}"
+                    class="w-full h-64 object-contain bg-black/30 rounded-xl">
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
     {% endif %}
+
+
+    <!-- Detected Faces -->
 
     {% if detected_image %}
-        {%for i in range(original_image|length)%}
-        <h2>Detected Faces {{i + 1}}</h2>
-        <div class="face-container">
-            <img src="{{ url_for('static', filename='uploads/' + detected_image) }}" alt="Detected Faces" width="300">
-            <div class="face-labels">
-                {%for label in face_labels[i]%}
-                    <input type="text" name="face {{loop.index}}_label" placeholder="Face {{loop.index}} Label" value="{{label}}">
-                {%endfor%}
+
+    <section class="mb-12">
+
+        <h2 class="text-2xl font-bold mb-8">
+            Detected Faces
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-8">
+
+            {% for image in detected_image %}
+
+            <div class="glass rounded-2xl p-5">
+
+                <h3 class="font-bold mb-4">
+                    Detection Result {{ loop.index }}
+                </h3>
+
+                <img
+                    src="{{ url_for('static', filename='uploads/' + image) }}"
+                    alt="Detected Faces"
+                    class="w-full h-64 object-contain bg-black/30 rounded-xl">
+
+                <div class="mt-6">
+
+                    <h4 class="text-indigo-300 font-semibold mb-4">
+                        Face Labels
+                    </h4>
+
+                    {% for label in face_labels[loop.index0] %}
+
+                    <div class="flex items-center gap-3 mb-3">
+
+                        <span class="text-sm text-gray-400">
+                            Face {{ loop.index }}
+                        </span>
+
+                        <input
+                            type="text"
+                            value="{{ label }}"
+                            readonly
+                            class="flex-1 bg-dark border border-gray-700
+                            rounded-lg p-3 text-sm">
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
             </div>
+
+            {% endfor %}
+
         </div>
-        {%endfor%}    
-    {%endif%}
-    {%if comparison_results is not none%}
-    <h2>Face Comparison</h2>
-    {%if comparison_results%}
-        <p>The faces match!</p>
-        {%else%}
-        <p>The face don't match.</p>
+
+    </section>
 
     {% endif %}
-    {% endif %}    
-</body>
-</html>
+
+
+    <!-- Comparison Results -->
+
+    {% if comparison_results is not none %}
+
+    <section class="glass rounded-3xl p-8 mb-12">
+
+        <h2 class="text-2xl font-bold mb-6">
+            Face Comparison
+        </h2>
+
+        {% if comparison_results %}
+
+            <div class="bg-green-500/10 border border-green-500/30
+                        rounded-2xl p-6">
+
+                <h3 class="text-green-400 text-xl font-bold">
+                    ✓ Faces Match
+                </h3>
+
+                <p class="text-gray-400 mt-2">
+                    The comparison algorithm found a match
+                    between the reference and compared face.
+                </p>
+
+            </div>
+
+        {% else %}
+
+            <div class="bg-red-500/10 border border-red-500/30
+                        rounded-2xl p-6">
+
+                <h3 class="text-red-400 text-xl font-bold">
+                    ✕ No Match Found
+                </h3>
+
+                <p class="text-gray-400 mt-2">
+                    The comparison algorithm did not find
+                    a matching face.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- Footer -->
+
+    <footer class="text-center border-t border-white/10 pt-8">
+
+        <p class="text-gray-500 text-sm">
+            Face Recognition AI Dashboard
+        </p>
+
+        <p class="text-gray-600 text-xs mt-2">
+            Built with Flask, Python, OpenCV & Tailwind CSS
+        </p>
+
+    </footer>
+
+</main>
+
+
+<!-- JavaScript -->
+
+<script>
+
+    const filesInput = document.getElementById("files");
+    const referenceInput = document.getElementById("reference_image");
+
+    filesInput.addEventListener("change", function() {
+
+        const count = this.files.length;
+
+        document.getElementById("fileCount").textContent =
+            count > 0
+            ? count + " image(s) selected"
+            : "No images selected";
+
+    });
+
+
+    referenceInput.addEventListener("change", function() {
+
+        document.getElementById("referenceName").textContent =
+            this.files.length > 0
+            ? this.files[0].name
+            : "No reference image selected";
+
+    });
+
+
+    document.getElementById("uploadForm").addEventListener("submit", function() {
+
+        const button = document.getElementById("submitButton");
+
+        button.textContent = "Processing Images...";
+        button.disabled = true;
+        button.classList.add("opacity-50", "cursor-not-allowed");
+
+    });
+
+</script>
+```
+
+\</body>
+\</html>
